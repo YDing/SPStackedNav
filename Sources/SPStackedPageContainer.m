@@ -198,7 +198,7 @@ static BOOL IsIPad11() {
     if ([gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]])
     {
         CGPoint translation = [(UIPanGestureRecognizer*)gestureRecognizer translationInView:[gestureRecognizer view]];
-        return (fabsf(translation.y) > fabsf(translation.x));
+        return (fabs(translation.y) > fabs(translation.x));
     }
     return YES;
 }
