@@ -1,11 +1,11 @@
 // Copyright 2014 Spotify
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,10 +34,10 @@
 - (id)initWithRootViewController:(UIViewController *)rootViewController
 {
     if (!(self = [self init])) return nil;
-    
+
     [self pushViewController:rootViewController animated:NO];
     [self setActiveViewController:rootViewController position:SPStackedNavigationPagePositionLeft animated:NO];
-    
+
     return self;
 }
 
@@ -47,14 +47,14 @@
     UIView *root = [[UIView alloc] initWithFrame:frame];
     root.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     root.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"backgroundTexture.png"]];
-        
+
     _scroll = [[SPStackedNavigationScrollView alloc] initWithFrame:frame];
     _scroll.delegate = self;
     _scroll.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
     [root addSubview:_scroll];
-    
+
     self.view = root;
-    
+
     for (UIViewController *viewController in [self childViewControllers])
         [self pushPageContainerWithViewController:viewController];
 }
@@ -70,10 +70,26 @@
 {
     CGSize size = self.view.frame.size;
     CGRect frame = CGRectMake(self.view.bounds.size.width, 0, 0, size.height);
-    frame.size.width = (viewController.stackedNavigationPageSize == kStackedPageHalfSize ?
-                        kSPStackedNavigationHalfPageWidth :
-                        size.width);
-    
+    CGFloat width;
+
+    switch (viewController.stackedNavigationPageSize) {
+        case kStackedPageHalfSize:
+            width = kSPStackedNavigationHalfPageWidth;
+            break;
+        case kStackedPageSplitViewWidthLeft:
+            width = kSPStackedNavigationSplitViewWidthLeft;
+            break;
+
+        case kStackedPageSplitViewWidthRight:
+            width = kSPStackedNavigationSplitViewWidthRight;
+            break;
+        case kStackedPageFullSize:
+        default:
+            width = frame.size.width;
+            break;
+    }
+    frame.size.width = width;
+
     SPStackedPageContainer *pageC = [[SPStackedPageContainer alloc] initWithFrame:frame VC:viewController];
     [_scroll addSubview:pageC];
 }
@@ -87,27 +103,27 @@
 {
     if (!viewController)
         return;
-    
+
     SPStackedNavigationPagePosition activePosition = SPStackedNavigationPagePositionRight;
     if (![self.childViewControllers count])
         activePosition = SPStackedNavigationPagePositionLeft;
-    
+
     if ([viewController parentViewController] == self && activate)
     {
         [self setActiveViewController:viewController position:activePosition animated:animated];
         return;
     }
     NSAssert([viewController parentViewController] == nil, @"cannot push view controller with an existing parent");
-    
+
     [self willChangeValueForKey:@"viewControllers"];
     [self addChildViewController:viewController];
-    
+
     if ([self isViewLoaded])
         [self pushPageContainerWithViewController:viewController];
-    
+
     if (activate)
         [self setActiveViewController:viewController position:activePosition animated:animated];
-    
+
     [viewController didMoveToParentViewController:self];
     [self didChangeValueForKey:@"viewControllers"];
 }
@@ -127,24 +143,24 @@
     UIViewController *viewController = [[self childViewControllers] lastObject];
     if (!viewController)
         return nil;
-    
+
     [self willChangeValueForKey:@"viewControllers"];
     [viewController willMoveToParentViewController:nil];
-    
+
     if ([self isViewLoaded])
     {
         SPStackedPageContainer *pageC = [_scroll containerForViewController:viewController];
         pageC.markedForSuperviewRemoval = YES;
     }
-    
-    
+
+
     [viewController removeFromParentViewController];
     [self didChangeValueForKey:@"viewControllers"];
-    
+
     [self setActiveViewController:[self.childViewControllers lastObject]
                          position:SPStackedNavigationPagePositionRight
                          animated:animated];
-    
+
     return viewController;
 }
 
@@ -162,7 +178,7 @@
         else
             break;
     }
-    
+
     NSArray *toPush = viewControllers;
     if (startI != NSNotFound)
     {
@@ -194,7 +210,7 @@
     NSArray *viewControllers = [self viewControllers];
     NSUInteger index = [viewControllers indexOfObject:viewController];
     if (index == NSNotFound) return;
-    
+
     [self setActiveViewController:viewController position:position];
     [_scroll setContentOffset:CGPointMake([_scroll scrollOffsetForAligningPage:(_scroll.subviews)[index]
                                                           position:self.activeViewControllerPagePosition],
@@ -243,7 +259,7 @@
     int targetCount = 1;
     if (self.viewControllers.count > 0 && [(self.viewControllers)[0] stackedNavigationPageSize] == kStackedPageHalfSize)
         targetCount = 2;
-    
+
     NSMutableArray *vcs = [NSMutableArray array];
     while(self.viewControllers.count > targetCount)
         [vcs addObject:[self popViewControllerAnimated:animated]];
