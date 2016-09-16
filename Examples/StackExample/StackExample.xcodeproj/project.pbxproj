@@ -282,6 +282,11 @@
 				CLASSPREFIX = SP;
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = Spotify;
+				TargetAttributes = {
+					05A4D242163C2F4000309444 = {
+						DevelopmentTeam = QHB9P24B27;
+					};
+				};
 			};
 			buildConfigurationList = 05A4D23D163C2F4000309444 /* Build configuration list for PBXProject "StackExample" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -420,6 +425,7 @@
 		05A4D262163C2F4000309444 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = QHB9P24B27;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "StackExample/StackExample-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -435,6 +441,7 @@
 		05A4D263163C2F4000309444 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = QHB9P24B27;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "StackExample/StackExample-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
